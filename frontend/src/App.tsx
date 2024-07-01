@@ -4,6 +4,8 @@ import Register from "./pages/Register";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppContextProvider } from "./contexts/AppContext";
 import SignIn from "./pages/SignIn";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AddHotel from "./pages/AddHotel";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: "sign-in",
         element: <SignIn />,
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [{ path: "add-hotel", element: <AddHotel /> }],
       },
     ],
   },

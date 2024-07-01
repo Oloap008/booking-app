@@ -21,7 +21,7 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
     console.log(decoded);
 
-    req.userId = (decoded as JwtPayload).userId;
+    req.userId = (decoded as JwtPayload).userID;
 
     next();
   } catch (error) {
