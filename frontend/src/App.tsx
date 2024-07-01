@@ -6,6 +6,7 @@ import { AppContextProvider } from "./contexts/AppContext";
 import SignIn from "./pages/SignIn";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AddHotel from "./pages/AddHotel";
+import MyHotels from "./pages/MyHotels";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +26,10 @@ const router = createBrowserRouter([
       },
       {
         element: <ProtectedRoute />,
-        children: [{ path: "add-hotel", element: <AddHotel /> }],
+        children: [
+          { path: "add-hotel", element: <AddHotel /> },
+          { path: "my-hotels", element: <MyHotels /> },
+        ],
       },
     ],
   },
