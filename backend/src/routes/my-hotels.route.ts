@@ -5,9 +5,22 @@ import Hotel from "../models/hotel.model";
 import { HotelType } from "../shared/types";
 import { verifyToken } from "../middleware/auth";
 import { body } from "express-validator";
-import console from "console";
+import console, { error } from "console";
 
 const router = express.Router();
+
+async function uploadImages(imageFiles: Express.Multer.File[]) {
+  const uploadPromises = imageFiles.map(async (image) => {
+    const b64 = Buffer.from(image.buffer).toString("base64");
+    const dataUri = `data:${image.mimetype};base64,${b64}`;
+    const res = await cloudinary.v2.uploader.upload(dataUri);
+
+    return res.url;
+  });
+
+  const imageUrls = await Promise.all(uploadPromises);
+  return imageUrls;
+}
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -40,19 +53,9 @@ router.post(
       const imageFiles = req.files as Express.Multer.File[];
       const newHotel: HotelType = req.body;
 
-      const uploadPromises = imageFiles.map(async (image) => {
-        const b64 = Buffer.from(image.buffer).toString("base64");
+      const imageUrls = await uploadImages(imageFiles);
 
-        let dataURI = "data:" + image.mimetype + ";base64," + b64;
-
-        const res = await cloudinary.v2.uploader.upload(dataURI);
-
-        return res.url;
-      });
-
-      const imageUrls = await Promise.all(uploadPromises);
-
-      newHotel.imageUrls = imageUrls;
+      newHotel.imageUrls = [...imageUrls];
       newHotel.lastUpdated = new Date();
       newHotel.userId = req.userId;
 
@@ -79,5 +82,71 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
     res.status(500).json({ status: "error", message: "Error fetching hotels" });
   }
 });
+
+router.get("/:id", verifyToken, async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const hotel = await Hotel.findOne({ _id: id, userId: req.userId });
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        hotel,
+      },
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: "error", message: "Error fetching the hotel" });
+  }
+});
+
+router.put(
+  "/:id",
+  verifyToken,
+  upload.array("imageFiles"),
+  async (req: Request, res: Response) => {
+    try {
+      const hotel = await Hotel.findOne({
+        _id: req.params.id,
+        userId: req.userId,
+      });
+
+      if (!hotel)
+        return res
+          .status(404)
+          .json({ status: "fail", message: "Hotel not found" });
+
+      const updateHotelData: HotelType = req.body;
+      updateHotelData.lastUpdated = new Date();
+
+      const imageFiles = req.files as Express.Multer.File[];
+
+      const uploadedImageUrls = await uploadImages(imageFiles);
+
+      updateHotelData.imageUrls = [
+        ...uploadedImageUrls,
+        ...(updateHotelData.imageUrls || []),
+      ];
+
+      const updatedHotel = await Hotel.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          userId: req.userId,
+        },
+        updateHotelData,
+        { new: true }
+      );
+
+      res.status(200).json({ status: "success", data: updatedHotel });
+    } catch (error) {
+      console.log(error);
+      res
+        .status(500)
+        .json({ status: "error", message: "Something went wrong" });
+    }
+  }
+);
 
 export default router;

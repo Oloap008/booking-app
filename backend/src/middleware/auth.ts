@@ -10,7 +10,6 @@ declare global {
 }
 
 export function verifyToken(req: Request, res: Response, next: NextFunction) {
-  console.log({ cookie: req.cookies });
   const token = req.cookies["auth_token"];
 
   if (!token) {
@@ -19,7 +18,6 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
-    console.log(decoded);
 
     req.userId = (decoded as JwtPayload).userID;
 

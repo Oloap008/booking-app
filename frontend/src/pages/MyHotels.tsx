@@ -9,7 +9,7 @@ import { formatCurrency } from "../util/helpers";
 function MyHotels() {
   const { data: hotelData, error } = useQuery({
     queryFn: fetchMyHotels,
-    queryKey: ["hotels"],
+    queryKey: ["myHotels"],
   });
   const { showToast } = useAppContext();
 
