@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AddHotel from "./pages/AddHotel";
 import MyHotels from "./pages/MyHotels";
 import EditHotel from "./pages/EditHotel";
+import SearchPage from "./pages/SearchPage";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "sign-in",
         element: <SignIn />,
+      },
+      {
+        path: "search",
+        element: <SearchPage />,
       },
       {
         element: <ProtectedRoute />,

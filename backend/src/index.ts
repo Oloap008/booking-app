@@ -6,9 +6,10 @@ import path from "path";
 import "dotenv/config";
 import { v2 as cloudinary } from "cloudinary";
 
-import userRoutes from "./routes/users.route";
 import authRoutes from "./routes/auth.route";
+import userRoutes from "./routes/users.route";
 import myHotelRoutes from "./routes/my-hotels.route";
+import hotelRoutes from "./routes/hotels.route";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -32,9 +33,10 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
-app.use("/api/my-hotels", myHotelRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/my-hotels", myHotelRoutes);
+app.use("/api/hotels", hotelRoutes);
 
 app.get("*", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../../frontend/dist/index.ts"));
