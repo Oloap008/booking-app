@@ -1,6 +1,7 @@
 import express, { Request, Response, query } from "express";
 import Hotel from "../models/hotel.model";
 import { HotelSearchResponse } from "../shared/types";
+import { param, validationResult } from "express-validator";
 
 const router = express.Router();
 
@@ -110,4 +111,28 @@ router.get("/search", async (req: Request, res: Response) => {
   }
 });
 
+router.get(
+  "/:id",
+  [param("id").notEmpty().withMessage("Hotel ID is required")],
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty())
+      return res.status(400).json({ statuts: "fail", message: errors.array() });
+
+    const id = req.params.id;
+
+    try {
+      const hotel = await Hotel.findById(id);
+
+      res.status(200).json({ status: "success", data: { hotel } });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        status: "error",
+        message: "There was an error fetching your hotel",
+      });
+    }
+  }
+);
 export default router;

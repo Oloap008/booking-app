@@ -152,3 +152,13 @@ export async function searchHotels(
 
   return data;
 }
+
+export async function fetchHotelById(id: string): Promise<HotelType> {
+  const res = await fetch(`${API_BASE_URL}/api/hotels/${id}`);
+
+  if (!res.ok) throw new Error("Error fetching the hotel");
+
+  const data = await res.json();
+
+  return data.data.hotel;
+}

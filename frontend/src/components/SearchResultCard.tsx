@@ -1,13 +1,15 @@
 import { AiFillStar } from "react-icons/ai";
 import { HotelType } from "../../../backend/src/shared/types";
 import { formatCurrency } from "../util/helpers";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 type Props = {
   hotel: HotelType;
 };
 
 function SearchResultCard({ hotel }: Props) {
+  const [searchParams] = useSearchParams();
+
   return (
     <div
       className="grid grid-cols-1 xl:grid-cols-[2fr_3fr] border border-slate-300 rounded-lg p-8 gap-8"
@@ -34,7 +36,7 @@ function SearchResultCard({ hotel }: Props) {
           </div>
 
           <Link
-            to={`/detail/${hotel._id}`}
+            to={`/detail/${hotel._id}?${searchParams.toString()}`}
             className="text-2xl font-bold cursor-pointer block"
           >
             {hotel.name}
@@ -66,7 +68,7 @@ function SearchResultCard({ hotel }: Props) {
               {formatCurrency(hotel.pricePerNight)} per night
             </p>
             <Link
-              to={`/detail/${hotel._id}`}
+              to={`/detail/${hotel._id}?${searchParams.toString()}`}
               className="bg-blue-600 text-white h-full p-2 font-bold text-xl max-w-fit hover:bg-blue-500"
             >
               View More

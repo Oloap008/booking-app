@@ -8,6 +8,7 @@ import HotelTypesFilter from "../components/HotelTypesFilter";
 import FacilitiesFilter from "../components/FacilitiesFilter";
 import PriceFilter from "../components/PriceFilter";
 import SortByFilter from "../components/SortByFilter";
+import SearchBar from "../components/SearchBar";
 
 function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -56,51 +57,56 @@ function SearchPage() {
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
-      <div className="rounded-lg border border-slate-300 p-5 h-fit sticky top-2">
-        <div className="space-y-5">
-          <h3 className="text-lg font-semibold border-b border-slate-300 pb-5">
-            Filter by:
-          </h3>
-          <StarRatingFilter />
-          <HotelTypesFilter />
-          <FacilitiesFilter />
-          <PriceFilter />
-        </div>
+    <>
+      <div className="mb-10">
+        <SearchBar />
       </div>
-
-      {isPending ? (
-        <div>Loading...</div>
-      ) : !hotels?.pagination.total ? (
-        <div>No hotels found</div>
-      ) : (
-        <div className="flex flex-col gap-5">
-          <div className="flex justify-between items-center">
-            <p className="text-xl font-bold">
-              {hotels?.pagination.total}{" "}
-              {hotels?.pagination.total > 1 ? "Hotels" : "Hotel"} Found{" "}
-              {searchParams.get("dest") !== "all" &&
-                searchParams.get("dest") &&
-                `in ${searchParams.get("dest")}`}
-            </p>
-
-            <SortByFilter />
-          </div>
-
-          {hotels?.data.hotels.map((hotel) => (
-            <SearchResultCard hotel={hotel} key={hotel._id} />
-          ))}
-
-          <div>
-            <Pagination
-              page={page}
-              pages={hotels?.pagination.pages || 1}
-              onPageChange={handlePageChange}
-            />
+      <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
+        <div className="rounded-lg border border-slate-300 p-5 h-fit sticky top-2">
+          <div className="space-y-5">
+            <h3 className="text-lg font-semibold border-b border-slate-300 pb-5">
+              Filter by:
+            </h3>
+            <StarRatingFilter />
+            <HotelTypesFilter />
+            <FacilitiesFilter />
+            <PriceFilter />
           </div>
         </div>
-      )}
-    </div>
+
+        {isPending ? (
+          <div>Loading...</div>
+        ) : !hotels?.pagination.total ? (
+          <div>No hotels found</div>
+        ) : (
+          <div className="flex flex-col gap-5">
+            <div className="flex justify-between items-center">
+              <p className="text-xl font-bold">
+                {hotels?.pagination.total}{" "}
+                {hotels?.pagination.total > 1 ? "Hotels" : "Hotel"} Found{" "}
+                {searchParams.get("dest") !== "all" &&
+                  searchParams.get("dest") &&
+                  `in ${searchParams.get("dest")}`}
+              </p>
+
+              <SortByFilter />
+            </div>
+
+            {hotels?.data.hotels.map((hotel) => (
+              <SearchResultCard hotel={hotel} key={hotel._id} />
+            ))}
+
+            <div>
+              <Pagination
+                page={page}
+                pages={hotels?.pagination.pages || 1}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 

@@ -9,6 +9,8 @@ import AddHotel from "./pages/AddHotel";
 import MyHotels from "./pages/MyHotels";
 import EditHotel from "./pages/EditHotel";
 import SearchPage from "./pages/SearchPage";
+import HotelDetail from "./components/HotelDetail";
+import SearchBar from "./components/SearchBar";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +18,16 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <>Test</>,
+        element: (
+          <div className="mb-10">
+            <SearchBar />
+            <p>test</p>
+          </div>
+        ),
+      },
+      {
+        path: "search",
+        element: <SearchPage />,
       },
       {
         path: "register",
@@ -27,8 +38,8 @@ const router = createBrowserRouter([
         element: <SignIn />,
       },
       {
-        path: "search",
-        element: <SearchPage />,
+        path: "/detail/:hotelId",
+        element: <HotelDetail />,
       },
       {
         element: <ProtectedRoute />,
