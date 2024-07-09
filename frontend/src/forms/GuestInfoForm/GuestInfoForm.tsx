@@ -40,8 +40,17 @@ function GuestInfoForm({ hotelId, pricePerNight }: Props) {
     },
   });
 
-  function onSubmit() {
-    navigate(`/hotel/${hotelId}/booking`);
+  function onSubmit(formData: GuestInfoFormData) {
+    searchParams.set("adultCount", formData.adultCount.toString());
+    searchParams.set("childCount", formData.childCount.toString());
+    searchParams.set("checkIn", formData.checkIn.toLocaleDateString("sv-SE"));
+    searchParams.set("checkOut", formData.checkOut.toLocaleDateString("sv-SE"));
+
+    setSearchParams(searchParams);
+
+    navigate(`/hotel/${hotelId}/booking`, {
+      state: { from: searchParams.toString() },
+    });
   }
 
   function onSignInClick(formData: GuestInfoFormData) {

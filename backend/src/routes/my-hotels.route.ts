@@ -6,6 +6,7 @@ import { HotelType } from "../shared/types";
 import { verifyToken } from "../middleware/auth";
 import { body } from "express-validator";
 import console, { error } from "console";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
@@ -55,11 +56,12 @@ router.post(
 
       const imageUrls = await uploadImages(imageFiles);
 
-      newHotel.imageUrls = [...imageUrls];
-      newHotel.lastUpdated = new Date();
-      newHotel.userId = req.userId;
-
-      const hotel = await Hotel.create(newHotel);
+      const hotel = await Hotel.create({
+        ...newHotel,
+        imageUrls: [...imageUrls],
+        lastUpdated: new Date(),
+        userId: req.userId,
+      });
 
       res.status(201).json({ status: "success", data: hotel });
     } catch (error) {

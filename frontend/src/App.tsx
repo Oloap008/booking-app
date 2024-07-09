@@ -11,6 +11,7 @@ import EditHotel from "./pages/EditHotel";
 import SearchPage from "./pages/SearchPage";
 import HotelDetail from "./components/HotelDetail";
 import SearchBar from "./components/SearchBar";
+import Booking from "./pages/Booking";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,7 @@ const router = createBrowserRouter([
         path: "/detail/:hotelId",
         element: <HotelDetail />,
       },
+
       {
         element: <ProtectedRoute />,
         children: [
@@ -50,6 +52,10 @@ const router = createBrowserRouter([
             element: <MyHotels />,
           },
           { path: "hotel-detail/:hotelId", element: <EditHotel /> },
+          {
+            path: "/hotel/:hotelId/booking",
+            element: <Booking />,
+          },
         ],
       },
     ],

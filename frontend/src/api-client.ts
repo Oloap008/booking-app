@@ -1,6 +1,12 @@
 import { RegisterFromData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { HotelSearchResponse, HotelType } from "../../backend/src/shared/types";
+import {
+  HotelSearchResponse,
+  HotelType,
+  PaymentIntentResponse,
+  UserType,
+} from "../../backend/src/shared/types";
+import { BookingFormData } from "./forms/BookingForm/BookingForm";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -44,6 +50,18 @@ export async function signIn(formData: SignInFormData) {
   if (!res.ok) throw new Error(resposeBody.message);
 
   return resposeBody;
+}
+
+export async function fetchCurrentUser(): Promise<UserType> {
+  const res = await fetch(`${API_BASE_URL}/api/users/me`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) throw new Error("Error fetching user");
+
+  const data = await res.json();
+
+  return data.data.user;
 }
 
 export async function signOut() {
@@ -161,4 +179,45 @@ export async function fetchHotelById(id: string): Promise<HotelType> {
   const data = await res.json();
 
   return data.data.hotel;
+}
+
+export async function createPaymentIntent(
+  hotelId: string,
+  numberOfNights: string
+): Promise<PaymentIntentResponse> {
+  const res = await fetch(
+    `${API_BASE_URL}/api/hotels/${hotelId}/bookings/payment-intent`,
+    {
+      credentials: "include",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ numberOfNights }),
+    }
+  );
+
+  if (!res.ok) throw new Error("Error fetching payment intent");
+
+  const data = await res.json();
+
+  return data;
+}
+
+export async function createRoomBooking(formData: BookingFormData) {
+  const res = await fetch(
+    `${API_BASE_URL}/api/hotels/${formData.hotelId}/bookings`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(formData),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Error booking room");
+  }
 }

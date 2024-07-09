@@ -1,9 +1,12 @@
-import express, { Request, Response, query } from "express";
+import express, { Request, Response } from "express";
 import Hotel from "../models/hotel.model";
 import { HotelSearchResponse } from "../shared/types";
 import { param, validationResult } from "express-validator";
+import bookingRoutes from "./bookings.route";
 
 const router = express.Router();
+
+router.use("/:hotelId/bookings", bookingRoutes);
 
 function constructSearchQuery(queryParams: any) {
   let constructedQuery: any = {};
@@ -135,4 +138,5 @@ router.get(
     }
   }
 );
+
 export default router;

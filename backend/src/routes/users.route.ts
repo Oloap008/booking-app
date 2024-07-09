@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import User from "../models/user.model";
 import jwt from "jsonwebtoken";
 import { check, validationResult } from "express-validator";
+import { verifyToken } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -55,4 +56,21 @@ router.post(
   }
 );
 
+router.get("/me", verifyToken, async (req: Request, res: Response) => {
+  const userId = req.userId;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user)
+      return res
+        .status(400)
+        .json({ status: "fail", message: "User not found" });
+
+    res.status(200).json({ status: "success", data: { user } });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: "error", message: "Something went wrong" });
+  }
+});
 export default router;
